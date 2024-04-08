@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Vignette Author" />
+
+<meta name="date" content="2024-04-08" />
+
+<title>TreeSHARP Introduction</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">TreeSHARP Introduction</h1>
+<h4 class="author">Vignette Author</h4>
+<h4 class="date">2024-04-08</h4>
+
+
+
+<div id="treesharp-overview" class="section level1">
+<h1>TreeSHARP Overview</h1>
+<p>This vignette demonstrates how to simulation data and fit a DTM
+regression model with Stan using the <code>TreeSHARP</code> package.</p>
+<div id="defining-a-tree" class="section level2">
+<h2>Defining a Tree</h2>
+<p>The user must specify a tree structure (via <code>ape</code>) for
+their data when fitting the model. In this example, we use a simple tree
+with only 3 leaf nodes.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>my_tree <span class="ot">&lt;-</span> <span class="fu">read.tree</span>(<span class="at">text =</span> <span class="st">&quot;(A, (B, C));&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(my_tree, <span class="st">&quot;c&quot;</span>, <span class="at">direction =</span> <span class="st">&quot;downward&quot;</span>, <span class="at">main =</span> <span class="st">&quot;Example Tree&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nodelabels</span>(<span class="at">bg=</span><span class="st">&quot;white&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="simulating-data" class="section level2">
+<h2>Simulating Data</h2>
+<p>We create data using <code>simulate_DTM</code>, which will produce an
+X matrix and coefficient values that will be used to generate the DTM
+response matrix, Y.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sim_data <span class="ot">&lt;-</span> <span class="fu">simulate_DTM</span>(<span class="at">subject_sim =</span> <span class="dv">100</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">num_cov =</span> <span class="dv">2</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">subject_N =</span> <span class="fu">rep</span>(<span class="dv">50</span>, <span class="dv">100</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">tree =</span> my_tree,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">covariates_sim =</span> <span class="dv">10</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">which_coninuous =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">rho =</span> <span class="fl">0.3</span>, </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">seed =</span> <span class="dv">220</span> )</span></code></pre></div>
+</div>
+<div id="fitting-a-model" class="section level2">
+<h2>Fitting a Model</h2>
+<p>To fit a model with <code>treesharp_stan</code>, three inputs are
+required: a covariate matrix, X; the response matrix, Y; and a tree.
+Other <code>rstan</code> inputs, such as the number of chains, initial
+values, etc., may also be provided. The <code>treesharp_stan</code>
+function will fit DTM regression model using a shared shrinkage
+horseshoe prior as recommended in our paper. We also provide functions
+for the other two priors discussed in the paper: the original “unique
+shrinkage” horseshoe prior (<code>dtm_horseshoe_stan</code>) and
+independent normal (<code>dtm_normal_stan</code>). Both functions also
+require X, Y, tree inputs, with <code>dtm_normal_stan</code> also
+requiring the user to provide the standard deviation to be used for the
+normal distribution.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">treesharp_stan</span>(<span class="at">X =</span> sim_data<span class="sc">$</span>X,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">Y =</span> sim_data<span class="sc">$</span>Y,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">tree =</span> my_tree,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">init =</span> <span class="dv">0</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">seed =</span> <span class="dv">1989</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">iter =</span> <span class="dv">1000</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="additional-functions" class="section level1">
+<h1>Additional Functions</h1>
+<p>This package includes additional functions that may be helpful when
+fitting a DTM regression model or working with DTM data.</p>
+<div id="tree-counts" class="section level2">
+<h2>Tree Counts</h2>
+<p>The function <code>DTM_counts</code> will take a <span class="math inline">\(Y\)</span> matrix that contains only leaf counts
+and return the corresponding counts for all leaf and internal nodes. You
+may opt to have them ordered by branch index rather than node index or
+to have the counts returned as proportions. Both of these options
+default to <code>FALSE</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DTM_counts</span>(<span class="at">Y =</span> sim_data<span class="sc">$</span>Y[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,], <span class="at">tree =</span> my_tree)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5]</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]   11   25   14   50   39</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    4   45    1   50   46</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3,]    0   38   12   50   50</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4,]    0    0   50   50   50</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5,]    0    0   50   50   50</span></span></code></pre></div>
+</div>
+<div id="dtm_likelihood" class="section level2">
+<h2>DTM_likelihood</h2>
+<p>Calculates the (log-)likelihood for the data given the provided
+Dirichlet parameters (gamma) and tree structure. The <span class="math inline">\(y\)</span> input should be provided in the format
+output by <code>DTM_counts</code> when <code>branches = TRUE</code>.
+Optionally, you may specify whether to return it as a log-likelihood
+(default; recommended) and whether to provide a single likelihood value
+(<code>simplify = TRUE</code>; default) or provide them for each
+observation (<code>simplify = FALSE</code>).</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>g1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>            <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">1</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>            <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">5</span>), <span class="at">byrow =</span> <span class="cn">TRUE</span>,<span class="at">nrow=</span><span class="dv">3</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">2</span>, <span class="dv">4</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>               <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">2</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>               <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">22</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>yb <span class="ot">&lt;-</span> <span class="fu">DTM_counts</span>(y1, my_tree)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">DTM_likelihood</span>(<span class="at">y =</span> yb, <span class="at">gamma =</span> g1, <span class="at">tree =</span> my_tree)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -15.75045</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">DTM_likelihood</span>(<span class="at">y =</span> yb, <span class="at">gamma =</span> g1, <span class="at">tree =</span> my_tree,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>               <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -5.609472 -5.953243 -4.187730</span></span></code></pre></div>
+</div>
+<div id="predict-dtm" class="section level2">
+<h2>Predict DTM</h2>
+<p>Produce the expected proportions for each node given the provided
+Dirichlet tree and parameters. If <span class="math inline">\(N_i\)</span> is provided, it will return expected
+counts.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">predict_DTM</span>(<span class="at">gamma =</span> g1, <span class="at">tree =</span> my_tree, <span class="at">N_i =</span> <span class="cn">NULL</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           [,1]      [,2]      [,3] [,4]      [,5]</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,] 0.5000000 0.2500000 0.2500000    1 0.5000000</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,] 0.3333333 0.4444444 0.2222222    1 0.6666667</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3,] 0.3333333 0.2962963 0.3703704    1 0.6666667</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">predict_DTM</span>(<span class="at">gamma =</span> g1, <span class="at">tree =</span> my_tree, <span class="at">N_i =</span> <span class="fu">c</span>(<span class="dv">100</span>,<span class="dv">20</span>, <span class="dv">500</span>))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            [,1]       [,2]       [,3] [,4]      [,5]</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]  50.000000  25.000000  25.000000  100  50.00000</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]   6.666667   8.888889   4.444444   20  13.33333</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3,] 166.666667 148.148148 185.185185  500 333.33333</span></span></code></pre></div>
+</div>
+<div id="sample-dtm" class="section level2">
+<h2>Sample DTM</h2>
+<p>Draw a random sample from a DTM distribution with the given tree,
+parameters, and size, N. The length of N should be equal to the number
+of rows in gamma.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sample_DTM</span>(<span class="at">gamma =</span> g1, <span class="at">N =</span> <span class="fu">c</span>(<span class="dv">100</span>,<span class="dv">100</span>,<span class="dv">43</span>), <span class="at">tree=</span> my_tree)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5]</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]   59   31   10  100   41</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]   11   79   10  100   89</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3,]   12   18   13   43   31</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

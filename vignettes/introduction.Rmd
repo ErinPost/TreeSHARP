@@ -1,0 +1,144 @@
+---
+title: "TreeSHARP Introduction"
+author: "Vignette Author"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# TreeSHARP Overview
+
+This vignette demonstrates how to simulation data and fit a DTM regression model with Stan using the `TreeSHARP` package.
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r source, message=FALSE, include=FALSE}
+library(TreeSHARP)
+```
+
+## Defining a Tree
+
+The user must specify a tree structure (via `ape`) for their data when fitting the model.
+In this example, we use a simple tree with only 3 leaf nodes.
+
+
+```{r tree}
+
+my_tree <- read.tree(text = "(A, (B, C));")
+plot(my_tree, "c", direction = "downward", main = "Example Tree")
+nodelabels(bg="white")
+
+```
+
+## Simulating Data
+
+We create data using `simulate_DTM`, which will produce an X matrix and coefficient values that will be used to generate the DTM response matrix, Y.
+
+```{r sim-DTM}
+
+
+sim_data <- simulate_DTM(subject_sim = 100,
+                         num_cov = 2,
+             subject_N = rep(50, 100),
+             tree = my_tree,
+             covariates_sim = 10,
+             which_coninuous = 1:10,
+             rho = 0.3, 
+             seed = 220 )
+
+```
+
+## Fitting a Model 
+
+To fit a model with `treesharp_stan`, three inputs are required: a covariate matrix, X; the response matrix, Y; and a tree.
+Other `rstan` inputs, such as the number of chains, initial values, etc., may also be provided.
+The `treesharp_stan` function will fit DTM regression model using a shared shrinkage horseshoe prior as recommended in our paper.
+We also provide functions for the other two priors discussed in the paper: the original "unique shrinkage" horseshoe prior (`dtm_horseshoe_stan`) and independent normal (`dtm_normal_stan`).
+Both functions also require X, Y, tree inputs, with `dtm_normal_stan` also requiring the user to provide the standard deviation to be used for the normal distribution.
+
+```{r fit, eval = FALSE}
+
+options(mc.cores = parallel::detectCores())
+
+mod <- treesharp_stan(X = sim_data$X,
+               Y = sim_data$Y,
+               tree = my_tree,
+               init = 0,
+               chains = 4,
+               seed = 1989,
+               iter = 1000)
+
+```
+# Additional Functions
+
+This package includes additional functions that may be helpful when fitting a DTM regression model or working with DTM data.
+
+## Tree Counts
+
+The function `DTM_counts` will take a $Y$ matrix that contains only leaf counts and return the corresponding counts for all leaf and internal nodes.
+You may opt to have them ordered by branch index rather than node index or to have the counts returned as proportions.
+Both of these options default to `FALSE`.
+
+```{r ex-DTM_counts}
+
+DTM_counts(Y = sim_data$Y[1:5,], tree = my_tree)
+
+```
+
+## DTM_likelihood
+
+Calculates the (log-)likelihood for the data given the provided Dirichlet parameters (gamma) and tree structure.
+The $y$ input should be provided in the format output by `DTM_counts` when `branches = TRUE`.
+Optionally, you may specify whether to return it as a log-likelihood (default; recommended) and whether to provide a single likelihood value (`simplify = TRUE`; default) or provide them for each observation (`simplify = FALSE`).
+
+```{r ex-DTM-likelihood}
+
+g1 <- matrix(c(1, 1, 1, 1,
+            1, 2, 2, 1,
+            1, 2, 4, 5), byrow = TRUE,nrow=3)
+
+y1 <- matrix(c(10, 2, 4,
+               5, 4, 2,
+               1, 0, 22), nrow = 3, byrow = TRUE)
+
+yb <- DTM_counts(y1, my_tree)
+
+DTM_likelihood(y = yb, gamma = g1, tree = my_tree)
+DTM_likelihood(y = yb, gamma = g1, tree = my_tree,
+               simplify = FALSE)
+
+```
+
+
+## Predict DTM
+
+Produce the expected proportions for each node given the provided Dirichlet tree and parameters.
+If $N_i$ is provided, it will return expected counts.
+
+```{r ex-predict_DTM}
+
+predict_DTM(gamma = g1, tree = my_tree, N_i = NULL)
+
+predict_DTM(gamma = g1, tree = my_tree, N_i = c(100,20, 500))
+
+```
+
+## Sample DTM
+
+Draw a random sample from a DTM distribution with the given tree, parameters, and size, N. The length of N should be equal to the number of rows in gamma.
+
+```{r ex-sample_DTM}
+
+sample_DTM(gamma = g1, N = c(100,100,43), tree= my_tree)
+
+```
+
