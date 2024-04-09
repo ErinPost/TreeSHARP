@@ -2,6 +2,8 @@
 
 export(DTM_counts)
 export(DTM_likelihood)
+export(dtm_horseshoe_stan)
+export(dtm_normal_stan)
 export(predict_DTM)
 export(sample_DTM)
 export(simulate_DTM)
